@@ -1,0 +1,189 @@
+.current-spots-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.current-spots-container h1 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.spots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.spot-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.spot-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.spot-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.spot-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+}
+
+.spot-info {
+  padding: 1rem;
+}
+
+.spot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.spot-header h3 {
+  font-size: 1.2rem;
+  margin: 0;
+  color: #333;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #666;
+}
+
+.rating i {
+  color: #ff385c;
+}
+
+.location {
+  color: #666;
+  margin: 0.5rem 0;
+}
+
+.price {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0.5rem 0;
+}
+
+.price span {
+  font-weight: 600;
+}
+
+.spot-actions {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.edit-button,
+.delete-button {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.edit-button {
+  background-color: #008489;
+  color: white;
+  text-decoration: none;
+}
+
+.edit-button:hover {
+  background-color: #006c70;
+}
+
+.delete-button {
+  background-color: #ff385c;
+  color: white;
+  border: none;
+}
+
+.delete-button:hover {
+  background-color: #e31c3d;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-size: 1.2rem;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #ff385c;
+  font-size: 1.2rem;
+}
+
+.no-spots {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.no-spots h2 {
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.create-spot-button {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background-color: #ff385c;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.create-spot-button:hover {
+  background-color: #e31c3d;
+}
+
+@media (max-width: 768px) {
+  .current-spots-container {
+    margin: 1rem auto;
+  }
+
+  .spots-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .spot-card {
+    border-radius: 8px;
+  }
+
+  .spot-image {
+    height: 180px;
+  }
+
+  .spot-info {
+    padding: 0.75rem;
+  }
+
+  .spot-actions {
+    padding: 0.75rem;
+  }
+} 
