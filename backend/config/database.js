@@ -26,9 +26,9 @@ module.exports = {
       ssl: { require: true, rejectUnauthorized: false }
     },
     define: { 
-      schema
+      schema: schema
     },
     migrationStorageTableSchema: schema,
-    seederStorageTableSchema: schema
+    seederStorageTableSchema: schema 
   }
 };
