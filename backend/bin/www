@@ -3,7 +3,6 @@
 // Import environment variables
 require('dotenv').config();
 
-const { port } = require('../config');
 
 const app = require('../app');
 const db = require('../db/models');
@@ -15,6 +14,7 @@ db.sequelize
     console.log('Database connection success! Sequelize is ready to use...');
 
     // Start listening for connections
+    const port = process.env.PORT;
     app.listen(port, () => console.log(`Listening on port ${port}...`));
   })
   .catch((err) => {
