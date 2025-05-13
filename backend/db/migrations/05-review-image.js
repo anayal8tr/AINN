@@ -1,12 +1,11 @@
 'use strict';
-
-const schema = process.env.SCHEMA || 'oasis_schema';
-
-const options = {
-  schema,
-  tableName: 'ReviewImages'
-};
-
+let options = {
+  // schema: 'retreat',
+   //tableName: 'Users'
+ };
+ if (process.env.NODE_ENV === 'production') {
+   options.schema = process.env.SCHEMA;  // define your schema in options object
+ }
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('ReviewImages', {
@@ -19,12 +18,15 @@ module.exports = {
       reviewId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: { schema, tableName: 'Reviews' }, key: 'id' },
+        references: {
+          model: 'Reviews',
+          key: 'id'
+        },
         onDelete: 'CASCADE'
       },
       url: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
@@ -38,8 +40,8 @@ module.exports = {
       }
     }, options);
   },
-
   async down(queryInterface, Sequelize) {
-    return queryInterface.dropTable(options);
+    options.tableName = "ReviewImages"
+    await queryInterface.dropTable(options);
   }
 };

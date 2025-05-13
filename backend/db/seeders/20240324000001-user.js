@@ -1,14 +1,16 @@
 'use strict';
 
+const { User } = require('../models');
 const bcrypt = require("bcryptjs");
-const schema = process.env.SCHEMA || 'oasis_schema';
+
+let options = {};
+if (process.env.NODE_ENV === 'production') {
+  options.schema = process.env.SCHEMA;  // define your schema in options object
+}
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.bulkInsert({
-      schema,
-      tableName: 'Users'
-    }, [
+    await User.bulkCreate([
       {
         firstName: 'FakeFirstName',
         lastName: 'FakeLastName',
@@ -40,9 +42,10 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete({
-      schema,
-      tableName: 'Users'
-    });
+    options.tableName = 'Users';
+    const Op = Sequelize.Op;
+    return queryInterface.bulkDelete(options, {
+      username: { [Op.in]: ['Demo-lition', 'FakeUser1', 'FakeUser2'] }
+    }, {});
   }
 };

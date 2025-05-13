@@ -1,6 +1,7 @@
 'use strict';
+const { Review } = require('../models');
+const bcrypt = require("bcryptjs");
 
-const schema = process.env.SCHEMA || 'oasis_schema';
 
 console.log("Seeding Reviews...");
 
@@ -46,9 +47,10 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete({
-      schema,
-      tableName: 'Reviews'
-    });
+    options.tableName = 'Reviews';
+    const Op = Sequelize.Op;
+    return queryInterface.bulkDelete(options, {
+      spotId: { [Op.in]: [1, 2, 3] }
+    }, {});
   }
 };

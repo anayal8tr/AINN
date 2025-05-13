@@ -1,4 +1,5 @@
 'use strict';
+
 console.log(1);
 const { Booking } = require('../models');
 const bcrypt = require("bcryptjs");
@@ -36,7 +37,7 @@ module.exports = {
     options.tableName = 'Bookings';
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(options, {
-      // name: { [Op.in]: ['Airbnb Name', 'Airbnb Second Name', 'Airbnb Third Name'] }
+      spotId: { [Op.in]: [1, 2, 3] }
     }, {});
   }
 };

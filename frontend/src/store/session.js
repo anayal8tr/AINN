@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { API_BASE_URL as BASE_URL } from '../config';
 import { restoreCSRF } from '../utils/csrf';
 
 const initialState = {
@@ -42,7 +41,7 @@ export const login = (credentials) => async (dispatch) => {
     // First get CSRF token
     const csrfToken = await restoreCSRF();
     
-    const response = await fetch(`${BASE_URL}/session`, {
+    const response = await fetch("api/session", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -75,7 +74,7 @@ export const signup = (userData) => async (dispatch) => {
     // First get CSRF token
     const csrfToken = await restoreCSRF();
     
-    const response = await fetch(`${BASE_URL}/users`, {
+    const response = await fetch("api/users", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -105,7 +104,7 @@ export const logout = () => async (dispatch) => {
     // First get CSRF token
     const csrfToken = await restoreCSRF();
     
-    const response = await fetch(`${BASE_URL}/session`, {
+    const response = await fetch("api/session", {
       method: 'DELETE',
       headers: {
         'XSRF-Token': csrfToken
@@ -132,7 +131,7 @@ export const restoreUser = () => async (dispatch) => {
     // First get CSRF token
     const csrfToken = await restoreCSRF();
     
-    const response = await fetch(`${BASE_URL}/session`, {
+    const response = await fetch("api/session", {
       headers: {
         'XSRF-Token': csrfToken
       },

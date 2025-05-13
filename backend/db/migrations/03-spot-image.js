@@ -1,12 +1,11 @@
 'use strict';
-
-const schema = process.env.SCHEMA || 'oasis_schema';
-
-const options = {
-  schema,
-  tableName: 'SpotImages'
-};
-
+let options = {
+  // schema: 'retreat',
+   //tableName: 'Users'
+ };
+ if (process.env.NODE_ENV === 'production') {
+   options.schema = process.env.SCHEMA;  // define your schema in options object
+ }
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('SpotImages', {
@@ -19,32 +18,32 @@ module.exports = {
       spotId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: { schema, tableName: 'Spots' }, key: 'id' },
+        references: {
+          model: 'Spots',
+          key: 'id'
+        }, 
         onDelete: 'CASCADE'
       },
       url: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
-      preview: {
+      preview:{
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: false
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        type: Sequelize.DATE
       }
     }, options);
   },
-
   async down(queryInterface, Sequelize) {
-    return queryInterface.dropTable(options);
+    options.tableName = "SpotImages";
+    await queryInterface.dropTable(options);
   }
 };
