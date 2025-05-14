@@ -4,8 +4,10 @@ const express = require('express');
 const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 
+
 // Security Imports
-const { setTokenCookie, restoreUser } = require('../../utils/auth');
+const { setTokenCookie, restoreUser , requireAuth} = require('../../utils/auth');
+
 
 //Utilities
 const { check } = require('express-validator');

@@ -1,4 +1,4 @@
-require('dotenv').config(); // Load .env variables
+// Load .env variables
 module.exports = {
     environment: process.env.NODE_ENV || 'development',
     port: process.env.PORT || 8000,
