@@ -94,7 +94,7 @@ router.post('/', validateSignup, async (req, res, next) => {
 });
 
 // GET current user
-router.get('/current', async (req, res, next) => {
+router.get('/current',requireAuth, async (req, res, next) => {
     try {
         const userId = req.user.id;
         const user = await User.findByPk(userId);
@@ -110,7 +110,7 @@ router.get('/current', async (req, res, next) => {
 });
 
 // PUT update a user by userId
-router.put('/:userId', async (req, res, next) => {
+router.put('/:userId',requireAuth, async (req, res, next) => {
     try {
         const userId = req.params.userId;
         const { firstName, lastName, email, username, password } = req.body;
@@ -128,7 +128,7 @@ router.put('/:userId', async (req, res, next) => {
 });
 
 // DELETE a user by userId
-router.delete('/:userId', async (req, res, next) => {
+router.delete('/:userId', requireAuth, async (req, res, next) => {
     try {
         const userId = req.params.userId;
         const user = await User.findByPk(userId);

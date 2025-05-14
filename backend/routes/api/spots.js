@@ -119,7 +119,7 @@ const validateSpots = [
 
 
 // Done
-router.get('/', async (req, res, next) => {
+router.get('/', requireAuth, async (req, res, next) => {
     try {
         let {page,size,maxLat,minLat,minLng,maxLng,minPrice,maxPrice} = req.query;
         if(!page) page = 1;
@@ -203,7 +203,7 @@ router.get('/', async (req, res, next) => {
 });
 
 //Done
-router.get('/current', async (req, res, next) => {
+router.get('/current', requireAuth, async (req, res, next) => {
     try {
         if (!req.user) {
             const error = new Error("Authentication required");
@@ -260,7 +260,7 @@ router.get('/current', async (req, res, next) => {
 });
 
 // Done
-router.get('/:spotId', async (req, res, next) => {
+router.get('/:spotId', requireAuth, async (req, res, next) => {
     try {
         const spotId = parseInt(req.params.spotId);
         if (isNaN(spotId)) {
@@ -327,7 +327,7 @@ router.get('/:spotId', async (req, res, next) => {
 
 
 // Done
-router.get('/:spotId/reviews', async (req, res, next) => {
+router.get('/:spotId/reviews',requireAuth, async (req, res, next) => {
     try {
         const spotId = req.params.spotId;
 
@@ -366,7 +366,7 @@ router.get('/:spotId/reviews', async (req, res, next) => {
 })
 
 // DONE
-router.get('/:spotId/bookings', async (req, res, next) => {
+router.get('/:spotId/bookings',requireAuth, async (req, res, next) => {
     try {
         const spotId = parseInt(req.params.spotId);
         const spot = await Spot.findByPk(spotId);
@@ -403,7 +403,7 @@ router.get('/:spotId/bookings', async (req, res, next) => {
 });
 
 // Done
-router.post('/', validateSpots, async (req, res, next) => {
+router.post('/', validateSpots, requireAuth, async (req, res, next) => {
     try {
         if(!req.user.id){
             const error = new Error("User needs to be signed in");
@@ -427,7 +427,7 @@ router.post('/', validateSpots, async (req, res, next) => {
     }
 });
 // done
-router.post('/:spotId/images', async (req, res, next) => {
+router.post('/:spotId/images', requireAuth, async (req, res, next) => {
     try {
         const routeId = req.params.spotId;
         const { url, preview } = req.body;
@@ -446,7 +446,7 @@ router.post('/:spotId/images', async (req, res, next) => {
     }
 });
 // done
-router.post('/:spotId/reviews', validateReview, async (req, res, next) => {
+router.post('/:spotId/reviews', validateReview, requireAuth, async (req, res, next) => {
     try {
         const spotId = parseInt(req.params.spotId);
         const userId = req.user.id;
@@ -485,7 +485,7 @@ router.post('/:spotId/reviews', validateReview, async (req, res, next) => {
     }
 });
 // NEEDS REDO
-router.post('/:spotId/bookings', async (req, res, next) => {
+router.post('/:spotId/bookings', requireAuth, async (req, res, next) => {
     try {
         const spotId = parseInt(req.params.spotId);
         const userId = req.user.id;
@@ -562,7 +562,7 @@ router.post('/:spotId/bookings', async (req, res, next) => {
 });
 
 // DONE
-router.put('/:spotId', validateSpots, async (req, res, next) => {
+router.put('/:spotId', validateSpots, requireAuth, async (req, res, next) => {
     try {
         const spotId = parseInt(req.params.spotId);
         const userId = req.user.id;
@@ -606,7 +606,7 @@ router.put('/:spotId', validateSpots, async (req, res, next) => {
 });
 
 //DONE
-router.delete('/:spotId', async (req, res, next) => {
+router.delete('/:spotId', requireAuth, async (req, res, next) => {
     try {
         const spotId = req.params.spotId;
         const ownerId = req.user.id;

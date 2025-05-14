@@ -18,7 +18,7 @@ const validateBooking = [
 ];
 
 // GET all bookings of the current user
-router.get('/current', async (req, res, next) => {
+router.get('/current',requireAuth, async (req, res, next) => {
     try {
         const currUser = req.user.id;
         const userSpot = await Booking.findAll({
@@ -47,7 +47,7 @@ router.get('/current', async (req, res, next) => {
 });
 
 // PUT update a booking by bookingId
-router.put('/:bookingId', validateBooking, async (req, res, next) => {
+router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) => {
     try {
         const bookingId = req.params.bookingId;
         const { startDate, endDate } = req.body;
@@ -125,7 +125,7 @@ router.put('/:bookingId', validateBooking, async (req, res, next) => {
 });
 
 // DELETE a booking by bookingId
-router.delete('/:bookingId', async (req, res, next) => {
+router.delete('/:bookingId',requireAuth, async (req, res, next) => {
     try {
         const bookingId = req.params.bookingId;
         const userId = req.user.id;

@@ -1,12 +1,6 @@
 'use strict';
-const { Review } = require('../models');
-const bcrypt = require("bcryptjs");
-
-
-console.log("Seeding Reviews...");
 
 const { Review } = require('../models');
-const { Op } = require("sequelize");
 
 let options = {};
 if (process.env.NODE_ENV === 'production') {
@@ -15,10 +9,7 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.bulkInsert({
-      schema,
-      tableName: 'Reviews'
-    }, [
+    await Review.bulkCreate([
       {
         spotId: 1,
         userId: 2,

@@ -4,7 +4,7 @@ const { requireAuth } = require('../../utils/auth');
 const router = express.Router();
 
 //DELETE Delete a Review image by its ID
-router.delete('/:reviewImageId', async (req, res, next) => {
+router.delete('/:reviewImageId',requireAuth, async (req, res, next) => {
     try {
         const reviewImageId = req.params.reviewImageId;
         const reviewImageToDelete = await ReviewImage.findByPk(reviewImageId);

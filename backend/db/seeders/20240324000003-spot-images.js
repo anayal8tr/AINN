@@ -1,7 +1,6 @@
 'use strict';
 
 const { SpotImage } = require('../models');
-const bcrypt = require("bcryptjs");
 
 let options = {};
 if (process.env.NODE_ENV === 'production') {
@@ -10,10 +9,7 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.bulkInsert({
-      schema,
-      tableName: 'SpotImages'
-    }, [
+    await SpotImage.bulkCreate([
       {
         spotId: 1,
         url: 'https://example.com/image1.jpg',

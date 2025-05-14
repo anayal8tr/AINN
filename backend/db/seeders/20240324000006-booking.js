@@ -2,7 +2,6 @@
 
 console.log(1);
 const { Booking } = require('../models');
-const bcrypt = require("bcryptjs");
 console.log(2);
 let options = {};
 if (process.env.NODE_ENV === 'production') {

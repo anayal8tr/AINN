@@ -11,7 +11,7 @@ const router = express.Router();
 
 //PROTECT INCOMING DATA FOR THE Create Spots ROUTE
 
-router.delete('/:imageId', async (req, res, next) => {
+router.delete('/:imageId',requireAuth, async (req, res, next) => {
     try {
         const imageId = req.params.imageId;
         const imageToDelete = await SpotImage.findByPk(imageId);

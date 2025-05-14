@@ -1,25 +1,16 @@
 'use strict';
 
-const { Spot } = require('../models');
-const bcrypt = require("bcryptjs");
-
 let options = {};
 if (process.env.NODE_ENV === 'production') {
   options.schema = process.env.SCHEMA;  // define your schema in options object
 }
 
-console.log(1);
 const { Spot } = require('../models');
 const bcrypt = require("bcryptjs");
-console.log(2);
-const schema = process.env.SCHEMA || 'oasis_schema';
-console.log(3);
+
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.bulkInsert({
-      schema,
-      tableName: 'Spots'
-    }, [
+    await Spot.bulkCreate([
       {
         ownerId: 1,
         address: '123 First St',
