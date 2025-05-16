@@ -32,7 +32,7 @@ const validateLogin = [
 ];
 
 // Log in
-router.post('/', validateLogin, requireAuth, async (req, res, next) => {
+router.post('/', validateLogin, async (req, res, next) => {
     try {
         const { credential, password } = req.body;
 

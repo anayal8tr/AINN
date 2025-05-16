@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { restoreCSRF } from '../utils/csrf';
+import { getCSRFToken, restoreCSRF } from '../utils/csrf';
 
 const initialState = {
   user: null,
@@ -39,7 +39,7 @@ export const login = (credentials) => async (dispatch) => {
     dispatch(setLoading());
     
     // First get CSRF token
-    const csrfToken = await restoreCSRF();
+    const csrfToken = await getCSRFToken();
     
     const response = await fetch("api/session", {
       method: 'POST',

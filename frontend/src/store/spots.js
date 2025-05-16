@@ -93,7 +93,7 @@ export const fetchSpots = () => async (dispatch) => {
     await restoreCSRF();
     const csrfToken = getCSRFToken();
     
-    const response = await fetch(`${BASE_URL}/spots`, {
+    const response = await fetch(`/api/spots`, {
       headers: {
         'XSRF-Token': csrfToken
       },
