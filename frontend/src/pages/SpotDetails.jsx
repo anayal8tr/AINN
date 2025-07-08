@@ -3,10 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchSpotById, deleteSpot } from '../store/spots';
 import { fetchSpotReviews } from '../store/reviews';
-import { fetchSpotBookings, createBooking } from '../store/bookings';
 import SpotImageUpload from '../components/SpotImageUpload';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
 import './SpotDetails.css';
 
 const SpotDetails = () => {

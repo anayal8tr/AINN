@@ -1,261 +1,168 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { API_BASE_URL as BASE_URL } from '../config';
-import { restoreCSRF, getCSRFToken } from '../utils/csrf';
+import { csrfFetch } from './csrf';
 
-const initialState = {
-  allSpots: {},
-  singleSpot: null,
-  status: 'idle',
-  error: null
-};
+//Action types
+const CREATE_SPOT = "spots/createSpot"
+const READ_SPOT = "spots/readSpot"
+const READ_ALL_SPOTS = "spots/readAllSpots"
+const UPDATE_SPOT = "spots/updateSpot"
+const DELETE_SPOT = "spots/deleteSpot"
 
-const spotsSlice = createSlice({
-  name: 'spots',
-  initialState,
-  reducers: {
-    setAllSpots: (state, action) => {
-      const spotsObj = {};
-      action.payload.Spots.forEach(spot => {
-        spotsObj[spot.id] = {
-          ...spot,
-          avgRating: spot.avgRating || 0,
-          previewImage: spot.previewImage || null
-        };
-      });
-      state.allSpots = spotsObj;
-      state.status = 'succeeded';
-      state.error = null;
-    },
-    setSingleSpot: (state, action) => {
-      state.singleSpot = {
-        ...action.payload,
-        avgRating: action.payload.avgRating || 0,
-        previewImage: action.payload.previewImage || null,
-        images: action.payload.images || []
-      };
-      state.status = 'succeeded';
-      state.error = null;
-    },
-    addSpot: (state, action) => {
-      const spot = {
-        ...action.payload,
-        avgRating: action.payload.avgRating || 0,
-        previewImage: action.payload.previewImage || null
-      };
-      state.allSpots[spot.id] = spot;
-      state.singleSpot = spot;
-      state.status = 'succeeded';
-      state.error = null;
-    },
-    updateSpot: (state, action) => {
-      const spot = {
-        ...action.payload,
-        avgRating: action.payload.avgRating || 0,
-        previewImage: action.payload.previewImage || null
-      };
-      state.allSpots[spot.id] = spot;
-      state.singleSpot = spot;
-      state.status = 'succeeded';
-      state.error = null;
-    },
-    removeSpot: (state, action) => {
-      delete state.allSpots[action.payload];
-      if (state.singleSpot?.id === action.payload) {
-        state.singleSpot = null;
-      }
-      state.status = 'succeeded';
-      state.error = null;
-    },
-    setError: (state, action) => {
-      state.error = action.payload;
-      state.status = 'failed';
-    },
-    setLoading: (state) => {
-      state.status = 'loading';
+//Action Creators
+const createSpot = (newSpot) => {
+    return{
+        type: CREATE_SPOT,
+        payload: newSpot
     }
-  }
-});
+}
 
-export const {
-  setAllSpots,
-  setSingleSpot,
-  addSpot,
-  updateSpot,
-  removeSpot,
-  setError,
-  setLoading
-} = spotsSlice.actions;
 
-// Thunks
-export const fetchSpots = () => async (dispatch) => {
-  try {
-    dispatch(setLoading());
-    await restoreCSRF();
-    const csrfToken = getCSRFToken();
-    
-    const response = await fetch(`/api/spots`, {
-      headers: {
-        'XSRF-Token': csrfToken
-      },
-      credentials: 'include'
+const readSpot = (spot) => {
+    return{
+        type: READ_SPOT,
+        spot
+    }
+}
+
+const readAllSpots = (spots) => {
+    return{
+        type: READ_ALL_SPOTS,
+        spots
+    }
+}
+
+const updateSpot = (spot) => {
+    return{
+        type: UPDATE_SPOT,
+        payload: spot
+    }
+}
+
+const deleteSpot = (spotId) => {
+    return{
+        type: DELETE_SPOT,
+        spotId
+    }
+}
+
+// const = () => {
+//     return{
+//         type: ,
+//     }
+// }
+
+//THUNKS
+
+export const loadAllSpots = () => async (dispatch) => {
+    const response = await csrfFetch('/api/spots', {
+      method: 'GET'
     });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to fetch spots');
+    if(response.ok){
+        const data= await response.json();
+         dispatch(readAllSpots(data.Spots));
     }
-    
-    const data = await response.json();
-    dispatch(setAllSpots(data));
-  } catch (error) {
-    dispatch(setError(error.message));
-  }
-};
+    return response;
+  };
 
-export const fetchCurrentUserSpots = () => async (dispatch) => {
-  try {
-    dispatch(setLoading());
-    await restoreCSRF();
-    const csrfToken = getCSRFToken();
-    
-    const response = await fetch(`${BASE_URL}/spots/current`, {
-      headers: {
-        'XSRF-Token': csrfToken
-      },
-      credentials: 'include'
+  export const readSpotThunk = (id) => async (dispatch) => {
+    const response = await csrfFetch(`/api/spots/${id}`,{
+        method: 'GET'
+    })
+    //console.log("HIIII", id)
+    if(response.ok){
+        const data = await response.json()
+         //  console.log("DATAA", data)
+        dispatch(readSpot(data))
+       // console.log("RESPONSE", response)
+        return data 
+   
+   
+    }
+   
+  }
+
+  export const createSpotThunk = (spotData) => async (dispatch) => {
+
+    const response = await csrfFetch('/api/spots', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(spotData),
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to fetch your spots');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create spot');
     }
 
-    const data = await response.json();
-    dispatch(setAllSpots(data));
-  } catch (error) {
-    dispatch(setError(error.message));
-  }
+    const newSpot = await response.json();
+    dispatch(createSpot(newSpot));
+    return newSpot;
 };
 
-export const fetchSpotById = (id) => async (dispatch) => {
-  try {
-    const spotId = parseInt(id);
-    if (isNaN(spotId) || spotId <= 0) {
-      throw new Error('Invalid spot ID');
+  export const updateSpotThunk = (id, payload) => async (dispatch) => {
+    const response = await csrfFetch(`/api/spots/${id}`,{
+        method: 'PUT',
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload)
+    })
+    if(response.ok){
+        const data = await response.json()
+        dispatch(updateSpot(data))
+        return data
     }
+  }
 
-    dispatch(setLoading());
-    await restoreCSRF();
-    const csrfToken = getCSRFToken();
 
-    const response = await fetch(`${BASE_URL}/spots/${spotId}`, {
-      headers: {
-        'XSRF-Token': csrfToken
-      },
-      credentials: 'include'
+export const deleteSpotThunk = (id) => async (dispatch) => {
+    const response = await csrfFetch(`/api/spots/${id}`, {
+      method: 'DELETE'
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to fetch spot');
+    if(response.ok){
+        //const data= await response.json();
+        // console.log(data)
+         dispatch(deleteSpot(id));
     }
+  }; 
 
-    const data = await response.json();
-    dispatch(setSingleSpot(data));
-  } catch (error) {
-    dispatch(setError(error.message));
-  }
-};
 
-export const createSpot = (spotData) => async (dispatch) => {
-  try {
-    dispatch(setLoading());
-    const response = await fetch(`${BASE_URL}/spots`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(spotData),
-      credentials: 'include'
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to create spot');
+
+  const initialState = {}
+//  const initialState = {
+//     spots: { error: null },
+//     isLoaded: false,
+//     current: { isLoaded: false, error: null },
+//   };
+
+
+const spotReducer = (state = initialState, action) => {
+    let newState;
+    let spots;
+    switch(action.type){
+        case CREATE_SPOT:
+            newState = { ...state };
+            newState[action.payload.id] = {...action.payload};
+            return newState;
+        case READ_SPOT:
+            newState = {...state}
+            // console.log("update spot", action.spot)
+            newState[action.spot.id] = {...action.spot}
+            return newState;
+        case READ_ALL_SPOTS:
+            // console.log('HIIII', action)
+            spots= {}
+            if(action.spots) 
+                action.spots.forEach(spot => {spots[spot.id] = spot})
+            return spots
+        case UPDATE_SPOT:
+            newState = { ...state };
+            newState[action.payload.id] = { ...action.payload };
+            return newState;
+        case DELETE_SPOT:
+            newState = {...state}
+            delete newState[action.spotId]
+            return newState;
+        default:
+            return state;
     }
-    dispatch(addSpot(data));
-    return data;
-  } catch (error) {
-    dispatch(setError(error.message));
-    throw error;
-  }
-};
+}
 
-export const updateSpotById = ({ id, ...spotData }) => async (dispatch) => {
-  try {
-    dispatch(setLoading());
-    const response = await fetch(`${BASE_URL}/spots/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(spotData),
-      credentials: 'include'
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to update spot');
-    }
-    dispatch(updateSpot(data));
-    return data;
-  } catch (error) {
-    dispatch(setError(error.message));
-    throw error;
-  }
-};
-
-export const deleteSpot = (id) => async (dispatch) => {
-  try {
-    dispatch(setLoading());
-    const response = await fetch(`${BASE_URL}/spots/${id}`, {
-      method: 'DELETE',
-      credentials: 'include'
-    });
-    if (!response.ok) {
-      throw new Error('Failed to delete spot');
-    }
-    dispatch(removeSpot(id));
-  } catch (error) {
-    dispatch(setError(error.message));
-    throw error;
-  }
-};
-
-export const addSpotImage = (spotId, imageData) => async (dispatch) => {
-  try {
-    dispatch(setLoading());
-    await restoreCSRF();
-    const csrfToken = getCSRFToken();
-    
-    const response = await fetch(`${BASE_URL}/spots/${spotId}/images`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'XSRF-Token': csrfToken
-      },
-      body: JSON.stringify(imageData),
-      credentials: 'include'
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to add image');
-    }
-
-    // After adding the image, fetch the updated spot
-    dispatch(fetchSpotById(spotId));
-  } catch (error) {
-    dispatch(setError(error.message));
-  }
-};
-
-export default spotsSlice.reducer; 
+export default spotReducer;

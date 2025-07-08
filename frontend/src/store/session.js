@@ -1,157 +1,134 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { getCSRFToken, restoreCSRF } from '../utils/csrf';
+// frontend/src/store/session.js
+import { csrfFetch } from './csrf';
 
-const initialState = {
-  user: null,
-  status: 'idle',
-  error: null
+const SET_USER = "session/setUser";
+const REMOVE_USER = "session/removeUser";
+
+const setUser = (user) => {
+  return {
+    type: SET_USER,
+    payload: user
+  };
 };
 
-const sessionSlice = createSlice({
-  name: 'session',
-  initialState,
-  reducers: {
-    setUser: (state, action) => {
-      state.user = action.payload;
-      state.status = 'succeeded';
-      state.error = null;
-    },
-    removeUser: (state) => {
-      state.user = null;
-      state.status = 'idle';
-      state.error = null;
-    },
-    setError: (state, action) => {
-      state.error = action.payload;
-      state.status = 'failed';
-    },
-    setLoading: (state) => {
-      state.status = 'loading';
-    }
-  }
-});
-
-export const { setUser, removeUser, setError, setLoading } = sessionSlice.actions;
-
-// Thunks
-export const login = (credentials) => async (dispatch) => {
-  try {
-    dispatch(setLoading());
-    
-    // First get CSRF token
-    const csrfToken = await getCSRFToken();
-    
-    const response = await fetch("api/session", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'XSRF-Token': csrfToken
-      },
-      body: JSON.stringify({
-        credential: credentials.email || credentials.credential,
-        password: credentials.password
-      }),
-      credentials: 'include'
-    });
-    
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to login');
-    }
-    
-    dispatch(setUser(data.user));
-  } catch (error) {
-    console.error('Login error:', error);
-    dispatch(setError(error.message));
-    throw error;
-  }
+const removeUser = () => {
+  return {
+    type: REMOVE_USER
+  };
 };
 
-export const signup = (userData) => async (dispatch) => {
-  try {
-    dispatch(setLoading());
-    
-    // First get CSRF token
-    const csrfToken = await restoreCSRF();
-    
-    const response = await fetch("api/users", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'XSRF-Token': csrfToken
-      },
-      body: JSON.stringify(userData),
-      credentials: 'include'
-    });
-    
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to sign up');
-    }
-    
-    dispatch(setUser(data.user));
-  } catch (error) {
-    console.error('Signup error:', error);
-    dispatch(setError(error.message));
-    throw error;
-  }
+export const login = (user) => async (dispatch) => {
+  const { credential, password } = user;
+  const response = await csrfFetch("/api/session", {
+    method: "POST",
+    body: JSON.stringify({
+      credential,
+      password
+    })
+  });
+  const data = await response.json();
+  dispatch(setUser(data.user));
+  return response;
 };
 
-export const logout = () => async (dispatch) => {
-  try {
-    dispatch(setLoading());
-    
-    // First get CSRF token
-    const csrfToken = await restoreCSRF();
-    
-    const response = await fetch("api/session", {
-      method: 'DELETE',
-      headers: {
-        'XSRF-Token': csrfToken
-      },
-      credentials: 'include'
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to logout');
-    }
-    
-    dispatch(removeUser());
-  } catch (error) {
-    console.error('Logout error:', error);
-    dispatch(setError(error.message));
-    throw error;
-  }
-};
 
+// ... restore the session user 
 export const restoreUser = () => async (dispatch) => {
-  try {
-    dispatch(setLoading());
-    
-    // First get CSRF token
-    const csrfToken = await restoreCSRF();
-    
-    const response = await fetch("api/session", {
-      headers: {
-        'XSRF-Token': csrfToken
-      },
-      credentials: 'include'
-    });
-    
+    const response = await csrfFetch("/api/session");
     const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to restore session');
-    }
-    
-    if (data.user) {
-      dispatch(setUser(data.user));
-    } else {
-      dispatch(removeUser());
-    }
-  } catch (error) {
-    console.error('Restore session error:', error);
-    dispatch(removeUser());
+    dispatch(setUser(data.user));
+    return response;
+  };
+  // ...
+
+// ...
+export const signup = (user) => async (dispatch) => {
+    const { username, firstName, lastName, email, password } = user;
+    const response = await csrfFetch("/api/users", {
+      method: "POST",
+      body: JSON.stringify({
+        username,
+        firstName,
+        lastName,
+        email,
+        password
+      })
+    });
+    const data = await response.json();
+    dispatch(setUser(data.user));
+    return response;
+  };
+  // ...
+
+
+// ...
+export const logout = () => async (dispatch) => {
+  const response = await csrfFetch('/api/session', {
+    method: 'DELETE'
+  });
+  dispatch(removeUser());
+  return response;
+};
+// ...
+
+
+const initialState = { user: null };
+
+const sessionReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case SET_USER:
+      return { ...state, user: action.payload };
+    case REMOVE_USER:
+      return { ...state, user: null };
+    default:
+      return state;
   }
 };
 
-export default sessionSlice.reducer; 
+export default sessionReducer;
+
+// import {csrfFetch} from "./csrf"
+
+// const ADD_USER = 'session/addUser'
+// const REMOVE_USER = 'seesion/removeUser'
+
+// const addUser = (payload) => ({
+//     type: ADD_USER, 
+//     payload
+// })
+
+// const removeUser = () => ({
+//     type: REMOVE_USER,
+
+// })
+
+// export const login = ({credential, password}) => async dispatch => {
+//     let res = await csrfFetch('/api/session', {
+//         method: 'POST',
+//         body:JSON.stringify({credential, password})
+//     })  
+
+//     if(res.ok){
+//         res = await res.json()
+//         dispatch(addUser(res))
+//         return res
+//     }
+// }
+
+// const initialState = {user: null}
+
+// const session = (state= initialState, action) => {
+//     switch (action.type) {
+//         case ADD_USER: { 
+//             const newState = {...state}
+//             newState.user = action.payload
+//             return newState}
+//         case REMOVE_USER: {
+//             return {...state, ...initialState}
+//         }
+//         default:
+//            return state
+//     }
+// }
+
+// export default session;
