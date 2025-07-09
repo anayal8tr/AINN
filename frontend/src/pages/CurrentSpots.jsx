@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { fetchCurrentUserSpots, deleteSpot } from '../store/spots';
+import { loadAllSpots, deleteSpotThunk } from '../store/spots';
 import './CurrentSpots.css';
 
 const CurrentSpots = () => {
@@ -11,7 +11,7 @@ const CurrentSpots = () => {
   const error = useSelector(state => state.spots.error);
 
   useEffect(() => {
-    dispatch(fetchCurrentUserSpots());
+    dispatch(loadAllSpots());
   }, [dispatch]);
 
   const spotsList = useMemo(() => {
@@ -24,8 +24,8 @@ const CurrentSpots = () => {
 
   const handleDelete = async (spotId) => {
     if (window.confirm('Are you sure you want to delete this spot?')) {
-      await dispatch(deleteSpot(spotId));
-      dispatch(fetchCurrentUserSpots());
+      await dispatch(deleteSpotThunk(spotId));
+      dispatch(loadAllSpots());
     }
   };
 

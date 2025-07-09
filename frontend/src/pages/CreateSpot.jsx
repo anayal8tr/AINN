@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { createSpot } from '../store/spots';
+import { createSpotThunk } from '../store/spots';
 import './CreateSpot.css';
 
 const CreateSpot = () => {
@@ -128,7 +128,7 @@ const CreateSpot = () => {
         images: [formData.previewImage, ...filteredImages]
       };
 
-      const newSpot = await dispatch(createSpot(spotData));
+      const newSpot = await dispatch(createSpotThunk(spotData));
       navigate(`/spots/${newSpot.id}`);
     } catch (error) {
       // Error is handled by the reducer

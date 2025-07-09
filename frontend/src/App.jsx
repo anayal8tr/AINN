@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { useDispatch } from 'react-redux';
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import { restoreUser } from './store/session';
@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import SpotDetails from './pages/SpotDetails';
 import CreateSpot from './pages/CreateSpot';
 import EditSpot from './pages/EditSpot';
+import CurrentSpots from './pages/CurrentSpots';
 // import './index.css';
 
 function Layout() {

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchSpotById, deleteSpot } from '../store/spots';
-import { fetchSpotReviews } from '../store/reviews';
+import { readSpotThunk, deleteSpotThunk } from '../store/spots';
+import { readReviewsThunk } from '../store/reviews';
 import SpotImageUpload from '../components/SpotImageUpload';
 import './SpotDetails.css';
 
@@ -25,8 +25,8 @@ const SpotDetails = () => {
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchSpotById(spotId));
-    dispatch(fetchSpotReviews(spotId));
+    dispatch(readSpotThunk(spotId));
+    dispatch(readReviewsThunk(spotId));
     dispatch(fetchSpotBookings(spotId));
   }, [dispatch, spotId]);
 
@@ -36,7 +36,7 @@ const SpotDetails = () => {
 
   const handleDelete = async () => {
     try {
-      await dispatch(deleteSpot(spotId));
+      await dispatch(deleteSpotThunk(spotId));
       navigate('/');
     } catch (error) {
       // Error is handled by the reducer
@@ -148,7 +148,7 @@ const SpotDetails = () => {
         <SpotImageUpload 
           spotId={spotId} 
           onSuccess={() => {
-            dispatch(fetchSpotById(spotId));
+            dispatch(readSpotThunk(spotId));
           }}
         />
       )}

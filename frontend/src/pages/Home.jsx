@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetchSpots } from '../store/spots';
+import { loadAllSpots } from '../store/spots';
 import './Home.css';
 
 const Home = () => {
@@ -12,7 +12,7 @@ const Home = () => {
   const error = useSelector(state => state.spots.error);
 
   useEffect(() => {
-    dispatch(fetchSpots());
+    dispatch(loadAllSpots());
   }, [dispatch]);
 
   const handleSpotClick = (spotId) => {
@@ -32,7 +32,7 @@ const Home = () => {
     return (
       <div className="error-container">
         <p>Error: {error}</p>
-        <button onClick={() => dispatch(fetchSpots())}>Try Again</button>
+        <button onClick={() => dispatch(loadAllSpots())}>Try Again</button>
       </div>
     );
   }
@@ -41,7 +41,7 @@ const Home = () => {
     return (
       <div className="empty-container">
         <p>No spots available at the moment.</p>
-        <button onClick={() => dispatch(fetchSpots())}>Refresh Spots</button>
+        <button onClick={() => dispatch(loadAllSpots())}>Refresh Spots</button>
       </div>
     );
   }

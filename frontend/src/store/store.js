@@ -1,25 +1,11 @@
-import { createStore, applyMiddleware, compose, combineReducers} from 'redux';
-import thunk from 'redux-thunk';
+import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
+import { thunk } from 'redux-thunk';
 import sessionReducer from './session';
 import spotReducer from './spots';
 import spotImageReducer from './images';
 import reviewsReducer from './reviews';
 
-
-const store = configureStore({
-  reducer: {
-    session: sessionReducer,
-    spots: spotsReducer,
-    reviews: reviewsReducer,
-    bookings: bookingsReducer
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false
-    })
-});
 const rootReducer = combineReducers({
-  // ADD REDUCERS HERE
   session: sessionReducer,
   spots: spotReducer,
   images: spotImageReducer,

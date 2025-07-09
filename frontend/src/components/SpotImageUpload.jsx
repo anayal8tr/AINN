@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addSpotImage } from '../store/spots';
+import { createSpotImageThunk } from '../store/images';
 import './SpotImageUpload.css';
 
 const SpotImageUpload = ({ spotId, onSuccess }) => {
@@ -14,7 +14,7 @@ const SpotImageUpload = ({ spotId, onSuccess }) => {
     setError(null);
 
     try {
-      await dispatch(addSpotImage(spotId, {
+      await dispatch(createSpotImageThunk(spotId, {
         url: imageUrl,
         preview: isPreview
       }));
